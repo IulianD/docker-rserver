@@ -1,8 +1,8 @@
 FROM obiba/opal-rserver
-RUN mkdir /srv_local
-RUN chown rserver /srv_local
-RUN usermod -d /srv_local rserver
-RUN mv /srv/* /srv_local/
-RUN sed -i 's/srv/srv_local/g'  /srv_local/conf/Rprofile.R
-RUN sed -i 's/srv/srv_local/g'  /srv_local/conf/Rserv.conf
-RUN gosu rserver Rscript -e "source('/srv_local/conf/Rprofile.R'); install.packages('VIM', lib='/srv_local/R/library'); devtools::install_github(c('sib-swiss/dsSwissKnife','vanduttran/dsSSCPclient', 'vanduttran/dsSSCP'), repos=c('https://cloud.r-project.org'), lib='/srv_local/R/library')"
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+RUN echo "deb http://cloud.r-project.org/bin/linux/debian buster-cran40/"> r.list
+RUN apt-get update --allow-releaseinfo-change
+RUN apt-get update &&  DEBIAN_FRONTEND=noninteractive apt-get install -y r-base libjq-dev cmake
+RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+RUN Rscript -e "source('/srv/conf/Rprofile.R'); update.packages(repos=c('https://cloud.r-project.org'), lib.loc='/usr/local/lib/R/site-library'); install.packages(c('Rcpp','RSQLite', 'mongolite','RPresto', 'vctrs', 'RMariaDB' , 'RPostgres','RANN','ranger', 'RCurl', 'jsonlite', 'party', 'testthat', 'synthpop', 'nloptr','party', 'dplyr'), repos=c('https://cloud.r-project.org'),lib='/usr/local/lib/R/site-library')"
+
